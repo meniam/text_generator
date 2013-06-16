@@ -31,8 +31,8 @@ class TextGenerator_Part
             return $value->generateText();
         }, $template['replacement_array']);
         $text = vsprintf($template['template'], $replacementArray);
-        print_r('SIMPLE___________' . "\n");
-        print_r($text . "\n");
+        //print_r('SIMPLE___________' . "\n");
+        //print_r($text . "\n");
         return $text;
     }
 }
