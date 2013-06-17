@@ -2,6 +2,7 @@
 
 require_once 'TextGenerator/Part.php';
 require_once 'TextGenerator/OrPart.php';
+require_once 'TextGenerator/XorPart.php';
 
 class TextGenerator
 {
@@ -10,10 +11,11 @@ class TextGenerator
     {
         $template = trim($template);
         if (mb_strpos($template, '{', null, 'utf8') === 0) {
-            $template = trim($template, '{}');
+            $template = trim($template, '{} ');
+            return new TextGenerator_XorPart($template);
         }
         if (mb_strpos($template, '[', null, 'utf8') === 0) {
-            $template = trim($template, '[]');
+            $template = trim($template, '[] ');
             return new TextGenerator_OrPart($template);
         }
         //print_r($template . "\n");

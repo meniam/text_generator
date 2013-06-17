@@ -10,15 +10,16 @@ set_include_path(
 
 require_once 'TextGenerator.php';
 
-$template = 'SeoGenerator { PRO|} { - |:} {программа, предназначенная|программный продукт, предназначенный} для {генерации|создания} уникальных [+,+описаний сайтов|названий сайтов|tt{анкоров|текстов ссылок}].Поддерживаются [+,+[+ и +переборы|перестановки]|вложенный синтаксис].';
+$template = 'SeoGenerator {PRO|} {-|:} {программа, предназначенная|программный продукт, предназначенный} для {генерации|создания} уникальных [ +, +описаний сайтов|названий сайтов|{анкоров|текстов ссылок}]. Поддерживаются [+, +[+ и +переборы|перестановки]|вложенный синтаксис|прочее].';
 
 $t = microtime(true);
-for ($i = 0; $i < 1000; $i++) {
-    $generator = TextGenerator::factory($template);
-    $generator->generateText();
+$generator = TextGenerator::factory($template);
+for ($i = 0; $i < 500; $i++) {
+    echo '<br /><br />';
+    echo $generator->generate();
 }
 $generator = TextGenerator::factory($template);
-echo $generator->generateText();
+echo $generator->generate();
 
 echo '<br />------------------<br />';
 echo microtime(true) - $t;

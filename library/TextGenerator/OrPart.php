@@ -1,46 +1,91 @@
 <?php
+require_once 'TextGenerator/XorPart.php';
 
-class TextGenerator_OrPart extends TextGenerator_Part
+class TextGenerator_OrPart extends TextGenerator_XorPart
 {
-    private $templateArray = array();
+    private $delimiter = '';
+
+    private $currentSequence;
+
+    /**
+     * Массив последовательностей слов, из которых будут формироваться фразы
+     * @var array
+     */
+    private $sequenceArray = array();
 
     public function __construct($template)
     {
-        $templateArray = array();
-        $template = preg_replace_callback('#[^\|]*(?:\[|\{)((?:(?:[^\[\{\]\}]+)|(?R))*)(?:\]|\})[^\|]*#', function($match) use (&$templateArray) {
-            $key = '%%' . count($templateArray);
-            $templateArray[$key] = $match[0];
-            return $key;
+        $delimiter       = '';
+        $template        = preg_replace_callback('#^\+([^\+]+)\+#', function ($match) use (&$delimiter) {
+            $delimiter = $match[1];
+            return '';
         }, $template);
-        $tplArray = explode('|', $template);
-        for ($i = 0, $count = count($tplArray); $i < $count; $i++) {
-            $tpl = $tplArray[$i];
-            if (mb_strpos($tpl, '%%', null, 'utf8') === 0) {
-                $tpl = $templateArray[$tpl];
-                $this->templateArray[] = $this->parseTemplate($tpl);
-            } else {
-                $this->templateArray[] = array(
-                    'template'          => $tpl,
-                    'replacement_array' => ''
-                );
+        $this->delimiter = $delimiter;
+
+        parent::__construct($template);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCurrentSequence()
+    {
+        return $this->currentSequence;
+    }
+
+    public function getNextSequence()
+    {
+        if (!$this->currentSequence) {
+            $this->currentSequence = range(0, count($this->template['template']) - 1);
+            return $this->currentSequence;
+        }
+        $currentSequence = $this->currentSequence;
+
+        $count = count($currentSequence);
+        $k     = null;
+        for ($i = 0; $i < $count; $i++) {
+            if (isset($currentSequence[$i + 1]) && $currentSequence[$i] < $currentSequence[$i + 1]) {
+                $k = $i;
             }
         }
-    }
-
-    public function generateText()
-    {
-        $template = $this->templateArray[0];
-        $replacementArray = $template['replacement_array'];
-        if ($replacementArray) {
-            $replacementArray = array_map(function ($value) {
-                /** @var $value TextGenerator_Part */
-                return $value->generateText();
-            }, $template['replacement_array']);
+        if (is_null($k)) {
+            //На колу мочало, начинай с начала!
+            return range(0, count($this->template['template']) - 1);
         }
-        $text = vsprintf($template['template'], $replacementArray);
-        //print_r('OR___________' . "\n");
-        //print_r($text . "\n");
-        return $text;
+        $l = null;
+        for ($i = 0; $i < $count; $i++) {
+            if ($currentSequence[$k] < $currentSequence[$i]) {
+                $l = $i;
+            }
+            //echo $l;
+        }
+        if (is_null($l)) {
+            //На колу мочало, начинай с начала!
+            return range(0, count($this->template['template']) - 1);
+        }
+        $k2               = $k + 1;
+        $nextSequence     = $currentSequence;
+        $nextSequence[$k] = $currentSequence[$l];
+        $nextSequence[$l] = $currentSequence[$k];
+
+        $reversePart = array_slice($nextSequence, $k2);
+        $reversePart = array_reverse($reversePart);
+        array_splice($nextSequence, $k2, count($nextSequence), $reversePart);
+
+        return $nextSequence;
     }
 
+    public function getCurrentTemplate()
+    {
+        $templateSequence      = $this->getNextSequence();
+        $this->currentSequence = $templateSequence;
+
+        $templateArray = $this->template['template'];
+        for ($i = 0, $count = count($templateSequence); $i < $count; $i++) {
+            $templateKey          = $templateSequence[$i];
+            $templateSequence[$i] = $templateArray[$templateKey];
+        }
+
+        return implode($this->delimiter, $templateSequence);
+    }
 }
