@@ -13,6 +13,11 @@ class TextGenerator_XorPart extends TextGenerator_Part
         $this->template       = $template;
     }
 
+    public function nextCurrentTemplateKey()
+    {
+        $this->currentTemplateKey++;
+    }
+
     public function getCurrentTemplate()
     {
         $templateArray = $this->template['template'];
