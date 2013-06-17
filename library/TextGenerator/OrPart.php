@@ -5,7 +5,7 @@ class TextGenerator_OrPart extends TextGenerator_XorPart
 {
     private $delimiter = '';
 
-    private $currentSequence;
+    private $currentTemplateKeySequence;
 
     /**
      * Массив последовательностей слов, из которых будут формироваться фразы
@@ -23,69 +23,95 @@ class TextGenerator_OrPart extends TextGenerator_XorPart
         $this->delimiter = $delimiter;
 
         parent::__construct($template);
+
+        $firstSequence = range(0, count($this->template) - 1);
+        $this->sequenceArray[implode($firstSequence)] = null;
+        $this->currentTemplateKeySequence = $firstSequence;
     }
 
-    /**
-     * @return array
-     */
-    public function getCurrentSequence()
+    public function getNextSequence($currentSequence)
     {
-        return $this->currentSequence;
-    }
+        $sequenceLength = count($currentSequence);
 
-    public function getNextSequence()
-    {
-        if (!$this->currentSequence) {
-            $this->currentSequence = range(0, count($this->template['template']) - 1);
-            return $this->currentSequence;
-        }
-        $currentSequence = $this->currentSequence;
-
-        $count = count($currentSequence);
-        $k     = null;
-        for ($i = 0; $i < $count; $i++) {
+        $k = null;
+        for ($i = 0; $i < $sequenceLength; $i++) {
             if (isset($currentSequence[$i + 1]) && $currentSequence[$i] < $currentSequence[$i + 1]) {
                 $k = $i;
             }
         }
+        //print_r($k);
         if (is_null($k)) {
             //На колу мочало, начинай с начала!
-            return range(0, count($this->template['template']) - 1);
+            return reset($this->sequenceArray);
         }
         $l = null;
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $sequenceLength; $i++) {
             if ($currentSequence[$k] < $currentSequence[$i]) {
                 $l = $i;
             }
             //echo $l;
         }
+        //print_r($l);
         if (is_null($l)) {
             //На колу мочало, начинай с начала!
-            return range(0, count($this->template['template']) - 1);
+            return reset($this->sequenceArray);
         }
-        $k2               = $k + 1;
         $nextSequence     = $currentSequence;
         $nextSequence[$k] = $currentSequence[$l];
         $nextSequence[$l] = $currentSequence[$k];
-
+        $k2 = $k + 1;
+        //print_r($k2);
+        /*for ($i = 0, $count = floor($sequenceLength / 2); $i < $count; $i++) {
+            $key1 = $k2 + $i;
+            $key2 = $k2 + $count - $i;
+            if ($key1 <= $key2) {
+                break;
+            }
+            print_r('////');
+            print_r($key1);
+            print_r($key2);
+            print_r('////');
+            $val1 = $nextSequence[$key1];
+            $nextSequence[$key1] = $nextSequence[$key2];
+            $nextSequence[$key2] = $val1;
+        }*/
+        //print_r($nextSequence);
+        //print_r($this->getNextSequence($nextSequence));
+        //die;
         $reversePart = array_slice($nextSequence, $k2);
         $reversePart = array_reverse($reversePart);
         array_splice($nextSequence, $k2, count($nextSequence), $reversePart);
+/*        print_r($this->getNextSequence($nextSequence));
+        die;*/
+
 
         return $nextSequence;
     }
 
+    /**
+     * Смещает текущую последрвательность ключей массива шаблона на следующую
+     */
+    public function next()
+    {
+        //print_r($this->sequenceArray);
+        $key = implode('', $this->currentTemplateKeySequence);
+        if (!isset($this->sequenceArray[$key]) || !($nextSequence = $this->sequenceArray[$key])) {
+            $nextSequence = $this->getNextSequence($this->currentTemplateKeySequence);
+            $this->sequenceArray[$key] = $nextSequence;
+        }
+        $this->currentTemplateKeySequence = $nextSequence;
+    }
+
     public function getCurrentTemplate()
     {
-        $templateSequence      = $this->getNextSequence();
-        $this->currentSequence = $templateSequence;
+        $templateKeySequence = $this->currentTemplateKeySequence;
 
-        $templateArray = $this->template['template'];
-        for ($i = 0, $count = count($templateSequence); $i < $count; $i++) {
-            $templateKey          = $templateSequence[$i];
-            $templateSequence[$i] = $templateArray[$templateKey];
+        $templateArray = $this->template;
+        for ($i = 0, $count = count($templateKeySequence); $i < $count; $i++) {
+            $templateKey             = $templateKeySequence[$i];
+            $templateKeySequence[$i] = $templateArray[$templateKey];
         }
 
-        return implode($this->delimiter, $templateSequence);
+        return implode($this->delimiter, $templateKeySequence);
     }
 }

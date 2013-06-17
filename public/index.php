@@ -14,12 +14,12 @@ $template = 'SeoGenerator {PRO|} {-|:} {программа, предназнач
 
 $t = microtime(true);
 $generator = TextGenerator::factory($template);
-for ($i = 0; $i < 500; $i++) {
+for ($i = 0; $i < 1000; $i++) {
     echo '<br /><br />';
     echo $generator->generate();
 }
-$generator = TextGenerator::factory($template);
-echo $generator->generate();
+/*$generator = TextGenerator::factory($template);
+echo $generator->generate();*/
 
 echo '<br />------------------<br />';
 echo microtime(true) - $t;

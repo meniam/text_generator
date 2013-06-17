@@ -3,18 +3,26 @@
 class TextGenerator_Part
 {
     /**
-     * Шаблон для генерации, преобразованный в массив из шаблона и массива замен управляющих конструкций
+     * Шаблон для генерации
      * @see TextGenerator_Part::parseTemplate()
-     * @var array
+     * @var string
      */
     protected $template;
+
+    /**
+     * Массив замен из управляющих конструкций (перестановок и переборов)
+     * @var array
+     */
+    protected $replacementArray;
 
     /**
      * @param string $template - шаблон, по которому будет генерироваться текст
      */
     public function __construct($template)
     {
-        $this->template = $this->parseTemplate($template);
+        $template               = $this->parseTemplate($template);
+        $this->template         = $template['template'];
+        $this->replacementArray = $template['replacement_array'];
     }
 
     /**
@@ -48,7 +56,6 @@ class TextGenerator_Part
 
     /**
      * Сгенерировать текст по текущему шаблону
-     *
      * @return string
      */
     public function generate()
@@ -63,29 +70,34 @@ class TextGenerator_Part
             $replacementArrayTmp[] = $value->generate();
         }
         $replacementArray = $replacementArrayTmp;
+
+        $this->next();
+
         if ($searchArray) {
             return str_replace($searchArray, $replacementArray, $template);
         }
         return $template;
     }
 
+    protected function next()
+    {
+    }
+
     /**
      * Получить текущий шаблон, по которому будет сгенерен текст
-     *
      * @return string
      */
     public function getCurrentTemplate()
     {
-        return $this->template['template'];
+        return $this->template;
     }
 
     /**
      * Получить массив замен для шаблона
-     *
      * @return array
      */
     public function getReplacementArray()
     {
-        return $this->template['replacement_array'];
+        return $this->replacementArray;
     }
 }
