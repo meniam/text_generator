@@ -7,19 +7,32 @@ set_include_path(
     get_include_path() .
     PATH_SEPARATOR . LIBRARY_PATH
 );
+?>
 
-require_once 'TextGenerator.php';
+<form action="" method="POST">
+    <textarea name="template" id="template" cols="100" rows="10">Генератор текста{ -|:} {скрипт, предназначенный|программа, предназначенная} для [+ и +генерации|создания] уникальных [ +, +описаний|названий|{анкоров|ссылок}].</textarea>
+    <br>
+    <input type="submit" value="Генерить!" />
+</form>
 
-$template = 'SeoGenerator {PRO|} {-|:} {программа, предназначенная|программный продукт, предназначенный} для {генерации|создания} уникальных [ +, +описаний сайтов|названий сайтов|{анкоров|текстов ссылок}]. Поддерживаются [+, +[+ и +переборы|перестановки]|вложенный синтаксис|прочее].';
+<?php
+if (isset($_POST['template'])) {
+    $template = $_POST['template'];
 
-$t = microtime(true);
-$generator = TextGenerator::factory($template);
-for ($i = 0; $i < 1000; $i++) {
-    echo '<br /><br />';
-    echo $generator->generate();
+    require_once 'TextGenerator.php';
+
+    //$template = 'SeoGenerator{ PRO|}{ -|:} {программа, предназначенная|программный продукт, предназначенный} для {генерации|создания} уникальных [ +, +описаний сайтов|названий сайтов|{анкоров|текстов ссылок}]. Поддерживаются [+, +[+ и +переборы|перестановки]|вложенный синтаксис|прочее].';
+
+    $t = microtime(true);
+    $generator = TextGenerator::factory($template);
+    for ($i = 0; $i < 50; $i++) {
+        echo '<br /><br />';
+        echo $generator->generate();
+    }
+
+    echo '<br />------------------<br />';
+    echo microtime(true) - $t;
 }
-/*$generator = TextGenerator::factory($template);
-echo $generator->generate();*/
+?>
 
-echo '<br />------------------<br />';
-echo microtime(true) - $t;
+

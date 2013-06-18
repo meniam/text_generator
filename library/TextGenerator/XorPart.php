@@ -30,18 +30,15 @@ class TextGenerator_XorPart extends TextGenerator_Part
     public function next()
     {
         $this->currentTemplateKey++;
+        if (!isset($this->template[$this->currentTemplateKey])) {
+            $this->currentTemplateKey = 0;
+        }
     }
 
     public function getCurrentTemplate()
     {
         $templateArray = $this->template;
-
         $templateKey = $this->currentTemplateKey;
-        if (!isset($templateArray[$templateKey])) {
-            $templateKey              = 0;
-            $this->currentTemplateKey = 0;
-        }
-        //$this->currentTemplateKey = $templateKey + 1;
 
         return $templateArray[$templateKey];
     }
