@@ -33,7 +33,7 @@ class TextGenerator_OrPart extends TextGenerator_XorPart
         parent::__construct($template);
 
         $firstSequence                    = range(0, count($this->template) - 1);
-        $this->sequenceArray[0]        = $firstSequence;
+        $this->sequenceArray[0]           = $firstSequence;
         $this->currentTemplateKeySequence = $firstSequence;
     }
 
@@ -47,56 +47,46 @@ class TextGenerator_OrPart extends TextGenerator_XorPart
     {
         $sequenceLength = count($currentSequence);
 
+        //Ищем максимальный k-индекс, для которого a[k] < a[k - 1]
         $k = null;
         for ($i = 0; $i < $sequenceLength; $i++) {
             if (isset($currentSequence[$i + 1]) && $currentSequence[$i] < $currentSequence[$i + 1]) {
                 $k = $i;
             }
         }
-        //print_r($k);
+        //Если k невозможно определить, то это конец последовательности, начинаем сначала
         if (is_null($k)) {
             //На колу мочало, начинай с начала!
             return reset($this->sequenceArray);
         }
+        //Ищем максимальный l-индекс, для которого a[k] < a[l]
         $l = null;
         for ($i = 0; $i < $sequenceLength; $i++) {
             if ($currentSequence[$k] < $currentSequence[$i]) {
                 $l = $i;
             }
-            //echo $l;
         }
-        //print_r($l);
+        //Если k невозможно определить (что весьма странно, k определили же), то начинаем сначала
         if (is_null($l)) {
             //На колу мочало, начинай с начала!
             return reset($this->sequenceArray);
         }
         $nextSequence     = $currentSequence;
+        //Меняем местами a[k] и a[l]
         $nextSequence[$k] = $currentSequence[$l];
         $nextSequence[$l] = $currentSequence[$k];
-        $k2               = $k + 1;
-        //print_r($k2);
-        /*for ($i = 0, $count = floor($sequenceLength / 2); $i < $count; $i++) {
-            $key1 = $k2 + $i;
-            $key2 = $k2 + $count - $i;
-            if ($key1 <= $key2) {
-                break;
+
+        $k2 = $k + 1;
+        //Разворачиваем массив начиная с k2 = k + 1
+        if ($k2 < ($sequenceLength - 1)) {
+            for ($i = 0, $count = floor(($sequenceLength - $k2) / 2); $i < $count; $i++) {
+                $key1                = $k2 + $i;
+                $key2                = $sequenceLength - 1 - $i;
+                $val1                = $nextSequence[$key1];
+                $nextSequence[$key1] = $nextSequence[$key2];
+                $nextSequence[$key2] = $val1;
             }
-            print_r('////');
-            print_r($key1);
-            print_r($key2);
-            print_r('////');
-            $val1 = $nextSequence[$key1];
-            $nextSequence[$key1] = $nextSequence[$key2];
-            $nextSequence[$key2] = $val1;
-        }*/
-        //print_r($nextSequence);
-        //print_r($this->getNextSequence($nextSequence));
-        //die;
-        $reversePart = array_slice($nextSequence, $k2);
-        $reversePart = array_reverse($reversePart);
-        array_splice($nextSequence, $k2, count($nextSequence), $reversePart);
-        /*        print_r($this->getNextSequence($nextSequence));
-                die;*/
+        }
 
         return $nextSequence;
     }
