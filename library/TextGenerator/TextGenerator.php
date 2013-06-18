@@ -1,8 +1,6 @@
 <?php
 
-require_once 'TextGenerator/Part.php';
-require_once 'TextGenerator/OrPart.php';
-require_once 'TextGenerator/XorPart.php';
+namespace TextGenerator;
 
 class TextGenerator
 {
@@ -12,14 +10,14 @@ class TextGenerator
         $template = trim($template);
         if (mb_strpos($template, '{', null, 'utf8') === 0) {
             $template = trim($template, '{}');
-            return new TextGenerator_XorPart($template);
+            return new XorPart($template);
         }
         if (mb_strpos($template, '[', null, 'utf8') === 0) {
             $template = trim($template, '[] ');
-            return new TextGenerator_OrPart($template);
+            return new OrPart($template);
         }
         //print_r($template . "\n");
-        return new TextGenerator_Part($template);
+        return new Part($template);
     }
 
 }

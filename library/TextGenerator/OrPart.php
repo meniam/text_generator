@@ -1,7 +1,8 @@
 <?php
-require_once 'TextGenerator/XorPart.php';
 
-class TextGenerator_OrPart extends TextGenerator_XorPart
+namespace TextGenerator;
+
+class OrPart extends XorPart
 {
     /**
      * Разделитель между словами

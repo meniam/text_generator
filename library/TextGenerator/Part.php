@@ -1,6 +1,8 @@
 <?php
 
-class TextGenerator_Part
+namespace TextGenerator;
+
+class Part
 {
     /**
      * Шаблон для генерации
@@ -94,7 +96,7 @@ class TextGenerator_Part
 
     /**
      * Получить массив замен для шаблона
-     * @return array
+     * @return array|Part[]
      */
     public function getReplacementArray()
     {
