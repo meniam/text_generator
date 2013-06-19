@@ -57,7 +57,7 @@ class Part
         $replacementArray = array();
 
         $template = preg_replace_callback('#(?:\[|\{)((?:(?:[^\[\{\]\}]+)|(?R))*)(?:\]|\})#', function ($match) use (&$replacementArray) {
-            $key                    = '%%' . count($replacementArray) . '%%';
+            $key                    = chr('0000' . count($replacementArray)); // use non printable chars
             $replacementArray[$key] = TextGenerator::factory($match[0], $this->getOptions());
             return $key;
         }, $template);

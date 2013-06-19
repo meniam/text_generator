@@ -16,7 +16,7 @@ class XorPart extends Part
      */
     private $currentTemplateKey = 0;
 
-    public function __construct($template)
+    public function __construct($template, array $options = array())
     {
         $template = $this->parseTemplate($template);
 

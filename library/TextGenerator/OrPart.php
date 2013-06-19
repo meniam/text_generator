@@ -5,7 +5,8 @@ namespace TextGenerator;
 class OrPart extends XorPart
 {
     /**
-     * Разделитель между словами
+     * Word delimiter
+     *
      * @var string
      */
     private $delimiter = '';
