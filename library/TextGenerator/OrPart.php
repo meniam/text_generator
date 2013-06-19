@@ -22,7 +22,7 @@ class OrPart extends XorPart
      */
     private $sequenceArray = array();
 
-    public function __construct($template)
+    public function __construct($template, array $options = array())
     {
         $delimiter       = '';
         $template        = preg_replace_callback('#^\+([^\+]+)\+#', function ($match) use (&$delimiter) {
@@ -31,7 +31,7 @@ class OrPart extends XorPart
         }, $template);
         $this->delimiter = $delimiter;
 
-        parent::__construct($template);
+        parent::__construct($template, $options);
 
         $firstSequence                    = range(0, count($this->template) - 1);
         $this->sequenceArray[0]           = $firstSequence;
