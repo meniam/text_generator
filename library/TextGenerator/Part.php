@@ -52,12 +52,13 @@ class Part
      *
      * @return array
      */
-    public function parseTemplate($template)
+    protected function parseTemplate($template)
     {
         $replacementArray = array();
 
         $template = preg_replace_callback('#(?:\[|\{)((?:(?:[^\[\{\]\}]+)|(?R))*)(?:\]|\})#', function ($match) use (&$replacementArray) {
-            $key                    = chr('0000' . count($replacementArray)); // use non printable chars
+            //$key                    = chr('0000' . count($replacementArray)); // use non printable chars
+            $key                    = '%0000' . count($replacementArray) . '%';
             $replacementArray[$key] = TextGenerator::factory($match[0], $this->getOptions());
             return $key;
         }, $template);
@@ -70,9 +71,10 @@ class Part
 
     /**
      * Сгенерировать текст по текущему шаблону
+     * @param bool $isRandom
      * @return string
      */
-    public function generate()
+    public function generate($isRandom = false)
     {
         $template         = $this->getCurrentTemplate();
         $replacementArray = $this->getReplacementArray();
@@ -93,6 +95,23 @@ class Part
         return $template;
     }
 
+    public function getReplacementCount()
+    {
+        $repeats = 1;
+        if (!empty($this->replacementArray)) {
+            foreach ($this->replacementArray as &$v) {
+                $repeats += $repeats * $v->getReplacementCount();
+            }
+        }
+
+        return $repeats;
+    }
+
+    public function getCount()
+    {
+        return count($this->template);
+    }
+
     protected function next()
     {
     }
@@ -101,7 +120,12 @@ class Part
      * Получить текущий шаблон, по которому будет сгенерен текст
      * @return string
      */
-    public function getCurrentTemplate()
+    protected function getCurrentTemplate()
+    {
+        return $this->template;
+    }
+
+    protected function getRandomTemplate()
     {
         return $this->template;
     }
@@ -110,7 +134,7 @@ class Part
      * Получить массив замен для шаблона
      * @return array|Part[]
      */
-    public function getReplacementArray()
+    protected function getReplacementArray()
     {
         return $this->replacementArray;
     }

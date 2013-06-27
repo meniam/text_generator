@@ -37,4 +37,17 @@ class PartTest extends TestCase
 
         $this->assertEquals('unknown', $part->getOption('unknown', 'unknown'));
     }
+
+    public function testGetCount()
+    {
+        $part = TextGenerator::factory("[a|b|c]");
+        $this->assertEquals(6, $part->getCount());
+
+        $part = TextGenerator::factory("[a|b|c|d]");
+        $this->assertEquals(24, $part->getCount());
+
+        $part = TextGenerator::factory("[a|b|c|d|e]");
+        $this->assertEquals(120, $part->getCount());
+
+    }
 }

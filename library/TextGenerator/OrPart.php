@@ -23,6 +23,8 @@ class OrPart extends XorPart
      */
     private $sequenceArray = array();
 
+    private $similarTemplateCount = 0;
+
     public function __construct($template, array $options = array())
     {
         $delimiter       = '';
@@ -94,6 +96,32 @@ class OrPart extends XorPart
     }
 
     /**
+     * Returns count of variants
+     *
+     * @return int
+     */
+    public function getCount()
+    {
+        $repeats = $this->getReplacementCount();
+        return $this->factorial(count(reset($this->sequenceArray))) * $repeats;
+    }
+
+    /**
+     * Factorial
+     *
+     * @param $x
+     * @return int
+     */
+    private  function factorial($x)
+    {
+        if ($x === 0) {
+            return 1;
+        } else {
+            return $x*$this->factorial($x-1);
+        }
+    }
+
+    /**
      * Смещает текущую последрвательность ключей массива шаблона на следующую
      */
     public function next()
@@ -105,6 +133,27 @@ class OrPart extends XorPart
             $this->sequenceArray[$key] = $nextSequence;
         }
         $this->currentTemplateKeySequence = $nextSequence;
+    }
+
+    /**
+     * Get template (random)
+     *
+     * @return string
+     */
+    protected function getRandomTemplate()
+    {
+        $randomSequence = range(0, count($this->template) - 1);
+        shuffle($randomSequence);
+        $templateKeySequence = $this->getNextSequence($randomSequence);
+
+        $templateArray = $this->template;
+        for ($i = 0, $count = count($templateKeySequence); $i < $count; $i++) {
+            $templateKey             = $templateKeySequence[$i];
+            $templateKeySequence[$i] = $templateArray[$templateKey];
+        }
+
+        return implode($this->delimiter, $templateKeySequence);
+
     }
 
     public function getCurrentTemplate()
