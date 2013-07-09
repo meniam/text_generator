@@ -9,7 +9,7 @@ class OrPart extends XorPart
      *
      * @var string
      */
-    private $delimiter = '';
+    private $delimiter = ' ';
 
     /**
      * Последовательность, в которой будут следовать фразы шаблона при генерации
@@ -27,12 +27,14 @@ class OrPart extends XorPart
 
     public function __construct($template, array $options = array())
     {
-        $delimiter       = '';
         $template        = preg_replace_callback('#^\+([^\+]+)\+#', function ($match) use (&$delimiter) {
             $delimiter = $match[1];
             return '';
         }, $template);
-        $this->delimiter = $delimiter;
+
+        if (isset($delimiter)) {
+            $this->delimiter = $delimiter;
+        }
 
         parent::__construct($template, $options);
 
