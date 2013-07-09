@@ -17,7 +17,7 @@ class Part
 
     /**
      * Массив замен из управляющих конструкций (перестановок и переборов)
-     * @var array
+     * @var array|Part[]
      */
     protected $replacementArray;
 
@@ -76,14 +76,14 @@ class Part
      */
     public function generate($isRandom = false)
     {
-        $template         = $this->getCurrentTemplate();
+        $template         = $isRandom ? $this->getRandomTemplate() : $this->getCurrentTemplate();
         $replacementArray = $this->getReplacementArray();
 
         $replacementArrayTmp = array();
         $searchArray         = array();
         foreach ($replacementArray as $key => $value) {
             $searchArray[]         = $key;
-            $replacementArrayTmp[] = $value->generate();
+            $replacementArrayTmp[] = $value->generate($isRandom);
         }
         $replacementArray = $replacementArrayTmp;
 
