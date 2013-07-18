@@ -97,10 +97,10 @@ class Part
 
     public function getReplacementCount()
     {
-        $repeats = 0;
+        $repeats = 1;
         if (!empty($this->replacementArray)) {
             foreach ($this->replacementArray as &$v) {
-                $repeats += $v->getCount();
+                $repeats *= $v->getCount();
             }
             return $repeats;
         } else {
