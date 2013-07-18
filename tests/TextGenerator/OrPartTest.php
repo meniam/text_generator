@@ -16,8 +16,8 @@ class OrPartTest extends TestCase
         $this->assertNotEquals($part->generate(true), $part->generate(true));
 
         $part = new OrPart($str);
-        $this->assertEquals('123456', $part->generate());
-        $this->assertEquals('123465', $part->generate());
+        $this->assertEquals('1 2 3 4 5 6', $part->generate());
+        $this->assertEquals('1 2 3 4 6 5', $part->generate());
     }
 
     public function testGetCount()

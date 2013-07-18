@@ -54,4 +54,9 @@ class XorPart extends Part
         $templateKey = mt_rand(0, count($this->template) - 1);
         return $templateArray[$templateKey];
     }
+
+    public function getCount()
+    {
+        return count($this->template) * $this->getReplacementCount();
+    }
 }

@@ -8,7 +8,7 @@ use TextGenerator\XorPart;
 
 class XorPartTest extends TestCase
 {
-    public function testGetRandomTemplate()
+/*    public function testGetRandomTemplate()
     {
         $str = "1|2|3|4|5|6";
         $part = new XorPart($str);
@@ -19,5 +19,18 @@ class XorPartTest extends TestCase
             $this->assertEquals($i, $part->generate());
         }
         $this->assertEquals('1', $part->generate());
+    }
+*/
+    public function testCount()
+    {
+        $str = "1|2|3|4|5|{5|6|7}";
+        $part = new XorPart($str);
+        $part->getCount();
+        $this->assertEquals(18, $part->getCount());
+
+        /*$str = "1|2|3|4|5|6";
+        $part = new XorPart($str);
+        $this->assertEquals(6, $part->getCount());*/
+
     }
 }
