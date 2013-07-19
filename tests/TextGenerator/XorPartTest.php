@@ -21,16 +21,22 @@ class XorPartTest extends TestCase
         $this->assertEquals('1', $part->generate());
     }
 */
-    public function testCount()
+  /*  public function testCount()
     {
         $str = "1|2|3|4|5|{5|6|7}";
         $part = new XorPart($str);
         $part->getCount();
         $this->assertEquals(18, $part->getCount());
 
-        /*$str = "1|2|3|4|5|6";
+        $str = "1|2|3|4|5|6";
         $part = new XorPart($str);
-        $this->assertEquals(6, $part->getCount());*/
-
+        $this->assertEquals(6, $part->getCount());
+    }
+*/
+    public function testInner()
+    {
+        $str = "1 {2|3}|4 {5|6}";
+        $part = new XorPart($str);
+        $this->assertNotEquals("", $part->generate(true));
     }
 }
