@@ -48,6 +48,9 @@ class XorPart extends Part
         return $templateArray[$templateKey];
     }
 
+    /**
+     * @return string
+     */
     protected function getRandomTemplate()
     {
         $templateArray = $this->template;
@@ -55,8 +58,11 @@ class XorPart extends Part
         return $templateArray[$templateKey];
     }
 
+    /**
+     * @return int
+     */
     public function getCount()
     {
-        return count($this->template) * $this->getReplacementCount();
+        return count($this->template) + $this->getReplacementCount() - 1;
     }
 }
