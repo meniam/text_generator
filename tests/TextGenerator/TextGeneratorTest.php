@@ -11,10 +11,10 @@ class TextGeneratorTest extends TestCase
     public function testFactory()
     {
         $str = " {hi} ";
-        $this->assertInstanceOf('TextGenerator\\XorPart', TextGenerator::factory($str));
+        $this->assertInstanceOf('TextGenerator\\Part', TextGenerator::factory($str));
 
         $str = " [hi] ";
-        $this->assertInstanceOf('TextGenerator\\OrPart', TextGenerator::factory($str));
+        $this->assertInstanceOf('TextGenerator\\Part', TextGenerator::factory($str));
 
         $str = " hi ";
         $this->assertInstanceOf('TextGenerator\\Part', TextGenerator::factory($str));

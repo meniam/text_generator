@@ -94,6 +94,9 @@ class Part
         return $template;
     }
 
+    /**
+     * @return int|void
+     */
     public function getReplacementCount()
     {
         $repeats = 1;
@@ -107,11 +110,17 @@ class Part
         }
     }
 
+    /**
+     * @return int
+     */
     public function getCount()
     {
-        return count($this->template);
+        return intval(count($this->template) * $this->getReplacementCount());
     }
 
+    /**
+     *
+     */
     protected function next()
     {
     }

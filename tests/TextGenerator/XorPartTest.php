@@ -9,6 +9,15 @@ use TextGenerator\XorPart;
 
 class XorPartTest extends TestCase
 {
+
+    public function testBug()
+    {
+        $str = "{1|2|3} {4|5|6}";
+        $part = TextGenerator::factory($str);
+        $this->assertEquals(9, $part->getCount());
+
+    }
+
     public function testGetRandomTemplate()
     {
         $str = "1|2|3|4|5|6";
@@ -24,10 +33,21 @@ class XorPartTest extends TestCase
 
     public function testCount()
     {
-        $str = "1|2|3|4|5|{5|6|7}";
+        $str = "1|2|3|4|5|{7|8|9}";
         $part = new XorPart($str);
         $part->getCount();
-        $this->assertEquals(18, $part->getCount());
+        $this->assertEquals(8, $part->getCount());
+
+        $str = "1|2|3|4|5|[7|8|9]";
+        $part = new XorPart($str);
+        $part->getCount();
+        $this->assertEquals(11, $part->getCount());
+
+        $str = "{{1|2|3} {4|5|6}}";
+        $part = TextGenerator::factory($str);
+        $part->getCount();
+        $this->assertEquals(9, $part->getCount());
+
 
         $str = "1|2|3|4|5|6";
         $part = new XorPart($str);
@@ -40,9 +60,5 @@ class XorPartTest extends TestCase
         $part = new XorPart($str);
 
         $this->assertNotEquals("", $part->generate(true));
-
-        $str = "{фототехника {приобретенная|купленная}|фототовары {купленные|приобретенные}}";
-        $part = TextGenerator::factory($str);
-//        echo $part->generate(true);
     }
 }
