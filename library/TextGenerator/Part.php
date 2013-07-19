@@ -56,13 +56,12 @@ class Part
     {
         $replacementArray = array();
 
-//        $template = preg_replace_callback('#(?:\[|\{)((?:(?:[^\[\{\]\}]+)|(?R))*)(?:\]|\})#', function ($match) use (&$replacementArray) {
-        $template = preg_replace_callback('#(?:\[|\{)([^\[\{\}\]]+)(?:\]|\})#s', function ($match) use (&$replacementArray) {
-            //$key                    = chr('0000' . count($replacementArray)); // use non printable chars
+        $template = preg_replace_callback('#(?:\[|\{)((?:(?:[^\[\{\]\}]+)|(?R))*)(?:\]|\})#', function ($match) use (&$replacementArray) {
             $key                    = '%0000' . count($replacementArray) . '%';
             $replacementArray[$key] = TextGenerator::factory($match[0], $this->getOptions());
             return $key;
         }, $template);
+
         return array(
             'template'          => $template,
             'replacement_array' => $replacementArray
