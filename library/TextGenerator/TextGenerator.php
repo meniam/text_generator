@@ -48,7 +48,7 @@ class TextGenerator
     public static function addReplace($name, $value)
     {
         $name = trim($name, '%');
-        $name = '%%' . $name . '%%';
+        $name = '%' . $name . '%';
         self::$replaceList[$name] = (string)$value;
     }
 }
