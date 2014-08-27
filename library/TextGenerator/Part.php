@@ -8,6 +8,9 @@ class Part
     const OPTION_FILTER_EMPTY_VALUES = 'filter_empty_values';
     const OPTION_REMOVE_DUPLICATES   = 'remove_duplicates';
 
+    const OPTION_GENERATE_RANDOM = 'generate_random';
+    const OPTION_GENERATE_HASH = 'generate_hash';
+
     /**
      * Шаблон для генерации
      * @see TextGenerator_Part::parseTemplate()
@@ -24,7 +27,9 @@ class Part
     private $options = [
         self::OPTION_STRIP_WHITE_SPACE => true,
         self::OPTION_FILTER_EMPTY_VALUES => true,
-        self::OPTION_REMOVE_DUPLICATES => true
+        self::OPTION_REMOVE_DUPLICATES => true,
+        self::OPTION_GENERATE_HASH => null,
+        self::OPTION_GENERATE_RANDOM => false
     ];
 
     /**
@@ -33,10 +38,10 @@ class Part
      */
     public function __construct($template, array $options = array())
     {
+        $this->setOptions($options);
         $template               = $this->parseTemplate($template);
         $this->template         = $template['template'];
         $this->replacementArray = $template['replacement_array'];
-        $this->setOptions($options);
     }
 
     /**
@@ -70,19 +75,18 @@ class Part
 
     /**
      * Сгенерировать текст по текущему шаблону
-     * @param bool $isRandom
      * @return string
      */
-    public function generate($isRandom = false)
+    public function generate()
     {
-        $template         = $isRandom ? $this->getRandomTemplate() : $this->getCurrentTemplate();
+        $template         = $this->getCurrentTemplate();
         $replacementArray = $this->getReplacementArray();
 
         $replacementArrayTmp = array();
         $searchArray         = array();
         foreach ($replacementArray as $key => $value) {
             $searchArray[]         = $key;
-            $replacementArrayTmp[] = $value->generate($isRandom);
+            $replacementArrayTmp[] = $value->generate();
         }
         $replacementArray = $replacementArrayTmp;
 
@@ -130,11 +134,6 @@ class Part
      * @return string
      */
     protected function getCurrentTemplate()
-    {
-        return $this->template;
-    }
-
-    protected function getRandomTemplate()
     {
         return $this->template;
     }
@@ -201,5 +200,20 @@ class Part
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * Factorial
+     *
+     * @param $x
+     * @return int
+     */
+    protected function factorial($x)
+    {
+        if ($x === 0) {
+            return 1;
+        } else {
+            return $x*$this->factorial($x-1);
+        }
     }
 }

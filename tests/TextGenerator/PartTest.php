@@ -14,7 +14,9 @@ class PartTest extends TestCase
         $options = array(
             Part::OPTION_FILTER_EMPTY_VALUES => false,
             Part::OPTION_REMOVE_DUPLICATES   => false,
-            Part::OPTION_STRIP_WHITE_SPACE   => false
+            Part::OPTION_STRIP_WHITE_SPACE   => false,
+            Part::OPTION_GENERATE_HASH       => null,
+            Part::OPTION_GENERATE_RANDOM     => false
         );
 
         $str = " hi ";
@@ -26,7 +28,9 @@ class PartTest extends TestCase
         $options = array(
             Part::OPTION_FILTER_EMPTY_VALUES => true,
             Part::OPTION_REMOVE_DUPLICATES   => true,
-            Part::OPTION_STRIP_WHITE_SPACE   => true
+            Part::OPTION_STRIP_WHITE_SPACE   => true,
+            Part::OPTION_GENERATE_HASH       => null,
+            Part::OPTION_GENERATE_RANDOM     => false
         );
         foreach ($options as $name => $value) {
             $part->setOption($name, $value);

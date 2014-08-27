@@ -2,6 +2,8 @@
 
 namespace TextGenerator;
 
+use Permutation\Permutation;
+
 class OrPart extends XorPart
 {
     /**
@@ -23,7 +25,10 @@ class OrPart extends XorPart
      */
     private $sequenceArray = array();
 
-    private $similarTemplateCount = 0;
+    /**
+     * @var Permutation
+     */
+    private $permutation;
 
     public function __construct($template, array $options = array())
     {
@@ -32,69 +37,17 @@ class OrPart extends XorPart
             return '';
         }, $template);
 
+        parent::__construct($template, $options);
+
         if (isset($delimiter)) {
             $this->delimiter = $delimiter;
         }
 
-        parent::__construct($template, $options);
-
-        $firstSequence                    = range(0, count($this->template) - 1);
+        $itemsCount        = count($this->template);
+        $this->permutation = new Permutation($itemsCount);
+        $firstSequence     = $this->permutation->current();
         $this->sequenceArray[0]           = $firstSequence;
         $this->currentTemplateKeySequence = $firstSequence;
-    }
-
-    /**
-     * Получает последовательность из другой последовательности, например, из 012 получается 021, далее 102 и т.д
-     * @param array $currentSequence - последовательность, на основе которой будет строится следующая
-     *
-     * @return mixed
-     */
-    public function getNextSequence($currentSequence)
-    {
-        $sequenceLength = count($currentSequence);
-
-        //Ищем максимальный k-индекс, для которого a[k] < a[k - 1]
-        $k = null;
-        for ($i = 0; $i < $sequenceLength; $i++) {
-            if (isset($currentSequence[$i + 1]) && $currentSequence[$i] < $currentSequence[$i + 1]) {
-                $k = $i;
-            }
-        }
-        //Если k невозможно определить, то это конец последовательности, начинаем сначала
-        if (is_null($k)) {
-            //На колу мочало, начинай с начала!
-            return reset($this->sequenceArray);
-        }
-        //Ищем максимальный l-индекс, для которого a[k] < a[l]
-        $l = null;
-        for ($i = 0; $i < $sequenceLength; $i++) {
-            if ($currentSequence[$k] < $currentSequence[$i]) {
-                $l = $i;
-            }
-        }
-        //Если k невозможно определить (что весьма странно, k определили же), то начинаем сначала
-        if (is_null($l)) {
-            //На колу мочало, начинай с начала!
-            return reset($this->sequenceArray);
-        }
-        $nextSequence     = $currentSequence;
-        //Меняем местами a[k] и a[l]
-        $nextSequence[$k] = $currentSequence[$l];
-        $nextSequence[$l] = $currentSequence[$k];
-
-        $k2 = $k + 1;
-        //Разворачиваем массив начиная с k2 = k + 1
-        if ($k2 < ($sequenceLength - 1)) {
-            for ($i = 0, $count = floor(($sequenceLength - $k2) / 2); $i < $count; $i++) {
-                $key1                = $k2 + $i;
-                $key2                = $sequenceLength - 1 - $i;
-                $val1                = $nextSequence[$key1];
-                $nextSequence[$key1] = $nextSequence[$key2];
-                $nextSequence[$key2] = $val1;
-            }
-        }
-
-        return $nextSequence;
     }
 
     /**
@@ -105,62 +58,55 @@ class OrPart extends XorPart
     public function getCount()
     {
         $repeats = $this->getReplacementCount();
-        return $this->factorial(count(reset($this->sequenceArray))) * $repeats;
+        return $this->getTemplateCount() * $repeats;
     }
 
     /**
-     * Factorial
-     *
-     * @param $x
      * @return int
      */
-    private  function factorial($x)
+    public function getTemplateCount()
     {
-        if ($x === 0) {
-            return 1;
-        } else {
-            return $x*$this->factorial($x-1);
-        }
+        return $this->factorial(count(reset($this->sequenceArray)));
     }
 
     /**
      * Смещает текущую последрвательность ключей массива шаблона на следующую
+     *
+     * @return array
      */
     public function next()
     {
-        //print_r($this->sequenceArray);
         $key = implode('', $this->currentTemplateKeySequence);
+
         if (!isset($this->sequenceArray[$key]) || !($nextSequence = $this->sequenceArray[$key])) {
-            $nextSequence              = $this->getNextSequence($this->currentTemplateKeySequence);
+            $nextSequence              = $this->permutation->nextSequence($this->currentTemplateKeySequence);
             $this->sequenceArray[$key] = $nextSequence;
         }
+
         $this->currentTemplateKeySequence = $nextSequence;
+
+        return $nextSequence;
     }
 
     /**
-     * Get template (random)
-     *
      * @return string
      */
-    protected function getRandomTemplate()
-    {
-        $randomSequence = range(0, count($this->template) - 1);
-        shuffle($randomSequence);
-        $templateKeySequence = $this->getNextSequence($randomSequence);
-
-        $templateArray = $this->template;
-        for ($i = 0, $count = count($templateKeySequence); $i < $count; $i++) {
-            $templateKey             = $templateKeySequence[$i];
-            $templateKeySequence[$i] = $templateArray[$templateKey];
-        }
-
-        return implode($this->delimiter, $templateKeySequence);
-
-    }
-
     public function getCurrentTemplate()
     {
-        $templateKeySequence = $this->currentTemplateKeySequence;
+        if ($hash = $this->getOption(self::OPTION_GENERATE_HASH)) {
+            if (!is_int($hash)) {
+                $hash = abs(crc32($hash));
+            }
+
+            $this->currentTemplateKeySequence = $templateKeySequence = $this->permutation->getByPos($hash);
+        } elseif ($this->getOption(self::OPTION_GENERATE_RANDOM)) {
+            $randomSequence = range(0, count($this->template) - 1);
+            shuffle($randomSequence);
+            
+            $this->currentTemplateKeySequence = $templateKeySequence = $this->permutation->nextSequence($randomSequence);
+        } else {
+            $templateKeySequence = $this->currentTemplateKeySequence;
+        }
 
         $templateArray = $this->template;
         for ($i = 0, $count = count($templateKeySequence); $i < $count; $i++) {

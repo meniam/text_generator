@@ -4,8 +4,17 @@ namespace TextGenerator;
 
 class TextGenerator
 {
+    /** @var  array */
     protected static $replaceList;
 
+    /**
+     * Factory method
+     *
+     * @param       $template
+     * @param array $options
+     *
+     * @return OrPart|Part|XorPart
+     */
     public static function factory($template, array $options = array())
     {
         $template = (string)$template;
@@ -31,11 +40,19 @@ class TextGenerator
         return new Part($template, $options);
     }
 
+    /**
+     * @return array
+     */
     public static function getReplaceList()
     {
-        return self::$replaceList;
+        return (array)self::$replaceList;
     }
 
+    /**
+     * Add list of replaces
+     *
+     * @param $array
+     */
     public static function addReplaceList($array)
     {
         if (is_array($array)) {
@@ -45,10 +62,14 @@ class TextGenerator
         }
     }
 
+    /**
+     * Add replace
+     *
+     * @param $name
+     * @param $value
+     */
     public static function addReplace($name, $value)
     {
-        $name = trim($name, '%');
-        $name = '%' . $name . '%';
-        self::$replaceList[$name] = (string)$value;
+        self::$replaceList['%' . trim($name, '%') . '%'] = (string)$value;
     }
 }
