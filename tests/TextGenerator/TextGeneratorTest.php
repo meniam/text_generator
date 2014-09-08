@@ -36,6 +36,12 @@ class TextGeneratorTest extends TestCase
                                TextGenerator::factory($str, [Part::OPTION_GENERATE_HASH => "2"])->generate(true));
     }
 
+    public function testSomeCase()
+    {
+        $str = "{[+, +США|Англии|Китая]}";
+        $this->assertEquals('Китая, Англии, США', TextGenerator::factory($str, [Part::OPTION_GENERATE_HASH => 11])->generate());
+    }
+
     public function testReplace()
     {
         $str = "Hi {%gender%} you are so [+ and +%type%]";
