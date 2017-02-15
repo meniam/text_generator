@@ -102,6 +102,10 @@ class Part
         return $template;
     }
 
+    /**
+     * @param null $seed
+     * @return mixed
+     */
     public function generateRandom($seed = null)
     {
         $template         = $this->getRandomTemplate($seed);
@@ -115,7 +119,7 @@ class Part
          */
         foreach ($replacementArray as $key => $value) {
             $searchArray[]         = $key;
-            $replacementArrayTmp[] = $value->generate();
+            $replacementArrayTmp[] = $value->generateRandom($seed);
         }
         $replacementArray = $replacementArrayTmp;
 
@@ -173,13 +177,19 @@ class Part
      */
     public function getRandomTemplate($seed = null)
     {
-        if ($seed) {
-            mt_srand(abs(crc32($seed.'_XorPartRandom')));
+        if (is_string($this->template)) {
+            return $this->template;
         }
-        $templateKey = mt_rand(0, count($this->template) - 1);
 
+        $templatesCount = count($this->template);
+        $templateKey = 0;
+        if ($templatesCount > 1) {
+            if ($seed) mt_srand(abs(crc32($seed.'_XorPartRandom')));
+            $templateKey = mt_rand(0, count($this->template) - 1);
+        }
         return $this->template[$templateKey];
     }
+
 
     /**
      * Получить массив замен для шаблона
