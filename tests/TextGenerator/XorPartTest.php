@@ -2,8 +2,7 @@
 
 namespace TextGeneratorTest;
 
-require_once __DIR__ . '/TestCase.php';
-
+use PHPUnit\Framework\TestCase;
 use TextGenerator\TextGenerator;
 use TextGenerator\XorPart;
 
@@ -22,7 +21,7 @@ class XorPartTest extends TestCase
     {
         $str = "1|2|3|4|5|6";
         $part = new XorPart($str);
-        $this->assertNotEquals($part->generate(true), $part->generate(true));
+        $this->assertNotEquals($part->generate(), $part->generate());
 
         $part = new XorPart($str);
         for ($i=1; $i<= count(explode('|', $str)); $i++) {
@@ -59,6 +58,6 @@ class XorPartTest extends TestCase
         $str = "1 {2|3}|4 {5|6}";
         $part = new XorPart($str);
 
-        $this->assertNotEquals("", $part->generate(true));
+        $this->assertNotEquals("", $part->generate());
     }
 }

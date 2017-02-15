@@ -2,8 +2,7 @@
 
 namespace TextGeneratorTest;
 
-require_once __DIR__ . '/TestCase.php';
-
+use PHPUnit\Framework\TestCase;
 use TextGenerator\Part;
 use TextGenerator\TextGenerator;
 

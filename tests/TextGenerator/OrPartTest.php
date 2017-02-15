@@ -2,10 +2,8 @@
 
 namespace TextGeneratorTest;
 
-require_once __DIR__ . '/TestCase.php';
-
+use PHPUnit\Framework\TestCase;
 use TextGenerator\OrPart;
-use TextGenerator\TextGenerator;
 
 class OrPartTest extends TestCase
 {
@@ -13,7 +11,7 @@ class OrPartTest extends TestCase
     {
         $str = "1|2|3|4|5|6";
         $part = new OrPart($str);
-        $this->assertNotEquals($part->generate(true), $part->generate(true));
+        $this->assertNotEquals($part->generate(), $part->generate());
 
         $part = new OrPart($str);
         $this->assertEquals('1 2 3 4 5 6', $part->generate());
@@ -53,7 +51,7 @@ class OrPartTest extends TestCase
         $str = "+ and +1|2|3|4|{5|6}";
         $part = new OrPart($str);
 
-        $part->getCount(true);
+        $part->getCount();
         $this->assertEquals(240, $part->getCount());
         $part->next();
         $result = array();

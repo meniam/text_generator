@@ -17,32 +17,14 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "meniam/permutation": ">=1.0.0"
+        "meniam/permutation": "~1.0"
     },
     "require-dev": {
-        "php": ">=5.4.0"
+        "phpunit/phpunit": "~6.0"
     },
     "autoload": {
         "psr-0": {
-            "TextGenerator": "library"
+            "TextGenerator": "src"
         }
-    },
-    "repositories":[
-        {
-            "type":"package",
-            "package":{
-                "name":"meniam/permutation",
-                "version":"v1.0.0",
-                "source":{
-                    "type":"git",
-                    "url":"git@github.com:meniam/permutation.git",
-                    "reference":"master"
-                },
-                "autoload": {
-                    "classmap" : ["src/"]
-                }
-            }
-        }
-    ]
-
+    }
 }
