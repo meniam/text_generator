@@ -18,6 +18,7 @@ class XorPart extends Part
 
     public function __construct($template, array $options = array())
     {
+        parent::__construct($template, $options);
         $this->setOptions($options);
         $template = $this->parseTemplate($template);
 
@@ -43,19 +44,13 @@ class XorPart extends Part
      */
     public function getCurrentTemplate()
     {
-        if ($hash = $this->getOption(self::OPTION_GENERATE_HASH)) {
-            if (!is_int($hash)) {
-                $hash = abs(crc32($hash));
-            }
+        return $this->template[$this->currentTemplateKey];
+    }
 
-            $templateCount = count($this->template);
-            $templateKey = ($hash > $templateCount) ? $hash % $templateCount : $templateCount % $hash;
-        } elseif ($this->getOption(self::OPTION_GENERATE_RANDOM)) {
-            $templateKey = mt_rand(0, count($this->template) - 1);
-        } else {
-            $templateKey = $this->currentTemplateKey;
-        }
-
+    public function getRandomTemplate($seed = null)
+    {
+        if ($seed) mt_srand(abs(crc32($seed.'_XorPartRandom')));
+        $templateKey = mt_rand(0, count($this->template) - 1);
         return $this->template[$templateKey];
     }
 
