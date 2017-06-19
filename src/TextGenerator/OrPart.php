@@ -100,7 +100,7 @@ class OrPart extends XorPart
     public function getRandomTemplate($seed = null)
     {
         if ($seed) mt_srand(abs(crc32($seed.'_orPartRandom')));
-        $templates = clone $this->template;
+        $templates = $this->template;
         $order = array_map(create_function('$val', 'return mt_rand();'), range(1, count($templates)));
         array_multisort($order, $templates);
 
