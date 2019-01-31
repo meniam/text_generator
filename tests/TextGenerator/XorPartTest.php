@@ -14,7 +14,6 @@ class XorPartTest extends TestCase
         $str = "{1|2|3} {4|5|6}";
         $part = TextGenerator::factory($str);
         $this->assertEquals(9, $part->getCount());
-
     }
 
     public function testGetRandomTemplate()

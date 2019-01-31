@@ -2,6 +2,7 @@
 
 namespace TextGenerator;
 
+use Permutation\Exception;
 use Permutation\Permutation;
 
 class OrPart extends XorPart
@@ -44,7 +45,12 @@ class OrPart extends XorPart
         }
 
         $itemsCount        = count($this->template);
-        $this->permutation = new Permutation($itemsCount);
+
+        try {
+            $this->permutation = new Permutation($itemsCount);
+        } catch (Exception $e) {
+        }
+
         $firstSequence     = $this->permutation->current();
         $this->sequenceArray[0]           = $firstSequence;
         $this->currentTemplateKeySequence = $firstSequence;
@@ -85,12 +91,18 @@ class OrPart extends XorPart
         return $nextSequence;
     }
 
-    /**
-     * @return string
-     */
+
     public function getCurrentTemplate()
     {
-        return implode($this->delimiter, $this->currentTemplateKeySequence);
+        $templateKeySequence = $this->currentTemplateKeySequence;
+
+        $templateArray = $this->template;
+        for ($i = 0, $count = count($templateKeySequence); $i < $count; $i++) {
+            $templateKey             = $templateKeySequence[$i];
+            $templateKeySequence[$i] = $templateArray[$templateKey];
+        }
+
+        return implode($this->delimiter, $templateKeySequence);
     }
 
     /**
@@ -101,18 +113,17 @@ class OrPart extends XorPart
     {
         if ($seed) mt_srand(abs(crc32($seed.'_orPartRandom')));
         $templates = $this->template;
-        $order = array_map(create_function('$val', 'return mt_rand();'), range(1, count($templates)));
+
+        $order = array_map(function () {return mt_rand();}, range(1, count($templates)));
         array_multisort($order, $templates);
 
-        $this->currentTemplateKeySequence = $templates;
-
+        $result = [];
         $templateArray = $this->template;
         for ($i = 0, $count = count($this->currentTemplateKeySequence); $i < $count; $i++) {
             $templateKey             = $this->currentTemplateKeySequence[$i];
-            $this->currentTemplateKeySequence[$i] = $templateArray[$templateKey];
+            $result[$i] = $templateArray[$templateKey];
         }
 
-        return implode($this->delimiter, $this->currentTemplateKeySequence);
+        return implode($this->delimiter, $result);
     }
-
 }

@@ -1,22 +1,23 @@
 {
     "name": "meniam/text_generator",
     "type": "library",
-    "description":  "Seo text generator tool",
+    "description":  "Seo text permutation tool",
     "keywords": ["app", "web", "seo", "text"],
     "homepage": "https://github.com/meniam/text_generator",
     "license":  "MIT",
     "authors": [
         {
-            "name": "Julia Loykova",
-            "email": "julinary@gmail.com"
-        },
-        {
             "name": "Eugene Myazin",
             "email": "meniam@gmail.com"
+        },
+        {
+            "name": "Julia Loykova",
+            "email": "julinary@gmail.com"
         }
     ],
     "require": {
         "php": ">=5.4.0",
+        "ext-mbstring": "*",
         "meniam/permutation": "~1.0"
     },
     "require-dev": {

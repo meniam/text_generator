@@ -152,7 +152,12 @@ class Part
      */
     public function getCount()
     {
-        return intval(count($this->template) * $this->getReplacementCount());
+        $cnt = 1;
+        if (is_array($this->template) || ($this->template instanceof \Countable)) {
+            $cnt = count($this->template);
+        }
+
+        return intval($cnt * $this->getReplacementCount());
     }
 
     /**
